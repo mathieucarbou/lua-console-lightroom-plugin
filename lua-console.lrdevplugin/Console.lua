@@ -4,6 +4,7 @@ Console.lua
 
 ------------------------------------------------------------------------------]]
 
+local inspect = require 'inspect'
 
 -- Access the Lightroom SDK namespaces.
 local LrFileUtils = import 'LrFileUtils'
@@ -167,7 +168,10 @@ LrFunctionContext.callWithContext('consoleDialog', function(context)
 
 		-- call the func async
 		LrTasks.startAsyncTask(function()
-			local status, ret = LrTasks.pcall(func)
+            local env = {}
+            env.inspect = inspect
+            local status, ret = LrFunctionContext.pcallWithEnvironment(func, env)
+			-- local status, ret = LrTasks.pcall(func)
 			if status then
 				LrDialogs.message( "result", tostring(ret), "info" );
 			else
